@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ractive Sandbox 1</title>
+</head>
+<body>
+
+    <!-- 3 areas needed
+    1) area to display  .... see div  id=app
+    2) template  type=text/ractive
+    3) instance    (var ractive = new Ractive.....
+    -->
+
+     <div id="app"></div>
+
+     <script id="template" type="text/ractive" >
+        This is my Ractive sandbox app
+     </script>
+
+     <script src='http://cdn.ractivejs.org/latest/ractive.js'>
+     </script>
+
+    <script>
+    //1st specify element to output  el
+    //2nd specify the template  template
+    //3rd specify any data
+        var ractive = new Ractive({
+            
+            el:'#app',
+            template: '#template',
+            data:{
+
+            }
+
+        })
+    </script>
+
+
+
+</body>
+
+</html>

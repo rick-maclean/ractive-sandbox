@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>R-active Sandbox</title>
+</head>
+<body>
+    <div id="app"></div>
+
+
+    <script id="template" type="text/ractive">
+         <h1 style="color:{{color}}"> {{greeting}} who is baba for {{name}} </h1>
+         <ul> 
+             <li> {{address.state}}  </li>
+             <li> {{address.street}}  </li>
+             <li>  {{address.city}} </li>
+         </ul>
+         <ul> 
+             {{#with address}}
+             <li>#with addresss {{state}}  </li>
+             <li> {{street}}  </li>
+             <li>  {{city}} </li>
+             {{/with}}
+         </ul>
+         {{#if showAddress}}
+         <ul> 
+             {{#address}}
+            
+             <li> {{street}}  </li>
+             <li>  {{city}} </li>
+              <li>{{state}}  </li>
+             {{/address}}
+         </ul>
+         {{else}}
+            This display of address showAddress is false
+         {{/if}}
+
+         <h3>Friends</h3>
+         <ul>
+             {{#friends}}
+             <li>{{name}} = {{age}}</li>
+             {{/friends}}
+         </ul>
+         
+
+         <h3>Work History</h3>
+         <table>
+             <tr>
+                 <th>ID</th>
+                 <th>Company</th>
+                 <th>Job TItle</th>
+                 <th>Years</th>
+            
+             </tr>
+             {{#each jobs:i}}
+             <tr>
+              
+                <td>{{i}}</td>                 
+                <td>{{company}}</td>                  
+                <td>{{title}}</td>
+                <td>{{years}}</td>
+             <tr>
+            {{/each}}
+
+
+
+         </table>
+    </script>
+
+    <script src='http://cdn.ractivejs.org/latest/ractive.js'>
+    </script>
+
+
+    <script>
+    
+    var ractive = new Ractive({
+        el: '#app',
+        template: '#template',
+        data:{
+            greeting:'Hellow Rick  ',
+            name:'Charlotte',
+            color: 'blue',
+            address:{
+                street: '7500 W Camp Wisdom',
+                city: 'Dallas',
+                state: 'TX'
+            },
+            showAddress: false,
+            friends:[
+                { name: 'Paul', age: '78' },
+                { name: 'Gordon', age: '59' },
+                { name: 'Otto', age: '81' },
+                { name: 'Jerry', age: '75' }
+            ],
+            jobs:[
+                { company: 'xyzCompany', title: 'Boss', years: 5 },
+                { company: 'abcCompany', title: 'Pinhead', years: 7 },
+                { company: 'uvwCompany', title: 'Erl', years: 9 },
+                { company: 'MacCompany', title: 'Duke', years: 55 }
+            ]
+
+        }
+    });
+
+    ractive.set('keypath1', 'valueforkeypath1');
+    ractive.set('color', 'green');
+
+    console.log(ractive.get('name'));
+
+    </script>
+
+    <script>
+    
+    function* getNumbers(){
+        yield 42;
+        yield 32;
+        return 19;
+    }
+
+    var iterator = getNumbers();
+    returnvalue = iterator.next();
+    console.log(returnvalue);
+    if (returnvalue.done == false)
+    {
+        returnvalue = iterator.next();
+        console.log(returnvalue.value);
+        if (returnvalue.done == false)
+        {
+            returnvalue = iterator.next();
+            console.log(returnvalue) 
+            if (returnvalue.done== true){console.log("we hit the end");}
+        }
+    }
+    else
+    {
+        console.log("no more return values");
+    }
+    /*
+    console.log(iterator.next());
+    console.log(iterator.next());
+    console.log(iterator.next());
+    */
+    
+    </script>
+
+    <script>
+    
+    function* getFibonacciSequnce(){
+       var val1=0, val2=1, swap;
+
+       yield val1;
+       yield val2;
+       while(true){
+           swap = val1 + val2;
+           
+           val1 = val2;
+           val2 = swap;         
+           yield swap;
+       }
+    }
+    var interateFibonacci = getFibonacciSequnce();
+    for (i=0; i<8; i++)
+    {
+        try{
+            console.log(interateFibonacci.next());
+        }
+        catch(err) {
+            console.log("an error occured with getFibonacciSequnce");
+            console.log(err.message);
+        }
+    } 
+    console.log(interateFibonacci.next(4));
+    console.log(interateFibonacci.next());
+
+    </script>
+
+    <script>
+    function* getStokPrice(name) {
+        var symbol = yield getStockSymbol(name);
+        var price = yield getSymbolPrice(symbol);
+        return price;
+    }
+
+    function spawn(generator) {
+        return new Promise((accept, reject) => {
+            var onResult = lastPromiseResult => {
+                var {value, done} generator.next(lastPromiseResult);
+                if (!done) {
+                    value.then(onResult, reject);
+                }
+                else accept(value);
+            };
+            onResult();
+        }
+        )
+    }
+    /*
+    > spawn(getStockPrice("Johnson and Johnson")).then(console.log);
+    > spawn(getStockPrice("JNJ")).then(console.log);
+
+    */
+
+    spawn(getStockPrice("Pfizer")).
+    then (
+        price => console.log(price),
+        error => console.error(error)
+        );
+    /*
+    Consumer
+    var result = generator.next()
+    Producer
+    var symbol = yield getStockSymbol("Pfizer");
+    Consumer
+    result == "PFE"
+    var result = generator.next("PFE")
+    Producer 
+    var symbol = "PFE"
+    (yield gets replaced by the value we push in
+    and execution resumes and pauses at the next yield
+    We are pushing a value in while pulling one out)
+    var price = yield getSymbolPrice(symbol);
+    Consumer
+     var result = generator.next("27.83")
+    Producer
+    return price; which is 27.83 and producer is done (no more data)
+    */
+
+
+    
+    </script>
+
+
+     <script>
+    
+    /*async is good to wait on 1 value but what about multiple values?*/
+    async function getStockPrice(name) {
+        var symbol = getStockSymbol(name),
+        price,
+        counter = 0;
+
+        while(price === undefined && counter < 3) {
+            try {
+                price = await get BloombergPrice(symbol);
+            } catch(e) { counter++; }
+        }
+        price = await getYahooPrice(symbol);
+        return price;
+    }
+    
+    </script>
+
+    
+</body>
+</html>
+
+

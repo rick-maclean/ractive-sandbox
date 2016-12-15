@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ractive Sandbox 1</title>
+</head>
+<body>
+
+    <!-- 3 areas needed
+    1) area to display  .... see div  id=app
+    2) template  type=text/ractive
+    3) instance    (var ractive = new Ractive.....
+    -->
+
+     <div id="app"></div>
+
+     <script id="template" type="text/ractive" >
+        <h1 style="color: {{color}}"> {{greeting}} my name is {{name}}</h1>
+     </script>
+
+     <script src='http://cdn.ractivejs.org/latest/ractive.js'>
+     </script>
+
+    <script>
+    //1st specify element to output  el
+    //2nd specify the template  template
+    //3rd specify any data
+        var ractive = new Ractive({
+            
+            el:'#app',
+            template: '#template',
+            data:{
+                greeting:'Hello greting',
+                name:'Baba',
+                color: "turquoise"
+            }
+        });
+
+        //ractive web site shows a lot of options 
+        // eg.  http://docs.ractivejs.org/latest/ractive-set
+        ractive.set('color', 'blue');
+    </script>
+
+
+
+</body>
+
+</html>
