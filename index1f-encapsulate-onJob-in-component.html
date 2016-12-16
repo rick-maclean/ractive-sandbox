@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ractive Sandbox 1</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+</head>
+<body>
+        <!-- 3 areas needed
+        1) area to display  .... see div  id=app
+        2) template  type=text/ractive
+        3) instance    (var ractive = new Ractive.....
+        4) this also has a component called Jobs
+        -->
+     <div class="container">
+        <div id="app1"></div>
+     </div>
+
+     <script id="template1" type="text/ractive" >
+        <h1 style="color: {{color}}"> {{greeting}} my name is {{name}}</h1>
+
+        {{#if showAddress}}
+            <ul>
+                {{#address}}
+                <li>{{street}}</li>
+                <li>{{city}}</li>
+                <li>{{state}}</li>
+                {{/address}}
+            </ul>
+        {{else}}
+            <p> 3rd Address boolean set to false </p>
+        {{/if}}
+<!-- Events  
+ event directive (in angular event is a custom html element)
+ = -->
+        <button on-click="showAddressToggle">
+            {{#if showAddress}}
+                Hide Address Toggle
+            {{else}}
+                Show Address Toggle
+            {{/if}}
+        </button>
+
+
+        <h3>Friends</h3>
+        <ul>
+        {{#friendsArray}}
+            <li>{{name}} - {{age}}</li>
+        {{/friendsArray}}
+        </ul>
+
+        <jobs />
+
+     </script>
+
+     <script id="jobs-template" type="text/ractive">
+        
+
+        <h3>Work History (This is the jobs component.)</h3>
+         <table class="table">
+             <tr>
+                 <th>ID</th>
+                 <th>Company</th>
+                 <th>Job TItle</th>
+                 <th>Years</th>
+             </tr>
+             {{#each jobs:i}}
+             <tr>
+                <td>{{i}}</td>                 
+                <td>{{company}}</td>                  
+                <td>{{title}}</td>
+                <td>{{years}}</td>
+             <tr>
+            {{/each}}
+         </table>
+         <button on-click="addJob()">Add Job</button>
+     </script>
+
+     <script src='http://cdn.ractivejs.org/latest/ractive.js'>
+     </script>
+
+    <script>
+    //put things in a component here with ractive.extend
+    //will use a lifecycle method which is certains methods or events that get fired at certain times
+    //during the lifecycle of the rendering of a component/app
+    //need another template script wtih id of jobs to match #jobs
+    //need to specify this is a component with component: {} in the main ractive instance
+    // like this    components: {jobs:Jobs}
+    //to display it now we use the html tag  <jobs/>
+
+    //move all the stuff into the Jobs component template
+    //isolated: true means only use its own data
+    //also need to move addJob function up here
+    //NOTE: had to change ractive.push to this.push
+    var Jobs = Ractive.extend(
+        {
+            template: '#jobs-template',
+            isolated: true,
+            oninit: function(){
+
+            },
+            addJob:function(){
+                this.push('jobs',{ company: 'mango', title: 'smoothy', years: 5 });
+            },
+            data:{
+                jobs:[
+                    { company: 'xyzCompany', title: 'Boss', years: 5 },
+                    { company: 'abcCompany', title: 'Pinhead', years: 7 },
+                    { company: 'uvwCompany', title: 'Erl', years: 9 },
+                    { company: 'MacCompany', title: 'Duke', years: 55 }
+                ]
+            }
+        }
+    );
+
+    //1st specify element to output  el
+    //2nd specify the template  template
+    //3rd specify any data
+    //the var ractive is the instance
+
+    //note we are encapsulating addJob in the instance
+    //see components: {jobs:Jobs},
+        var ractive = new Ractive({
+            
+            el:'#app1',
+            template: '#template1',
+            components: {jobs:Jobs},
+            data:{
+                greeting:'Hello greting',
+                name:'Baba',
+                color: "turquoise",
+                address:{
+                    street: '7500 camp wisdom',
+                    city: 'dallas',
+                    state: 'TX'
+                },
+                friendsArray: [
+                    {  name: 'Tom', age: 45},
+                    {  name: 'Lori', age: 59},
+                    {  name: 'Mike', age: 48},  
+                ],
+                showAddress : false
+            }
+        });
+
+        //ractive web site shows a lot of options 
+        // eg.  http://docs.ractivejs.org/latest/ractive-set
+        // ractive.set( keypath, value )
+        ractive.set('color', 'green');
+        console.log(ractive.get('name'));
+
+        //not sure why this next line is not working now that we have the component.
+        ractive.push('jobs',{ company: 'pomegranat', title: 'startTrecPhone', years: 3 });
+        //jobs.splice('jobs', 2, 2, { company: 'Duncan', title: 'Dark Warrior', years: 850 }); //start at 2 and remove 2 add one at 2
+
+        ractive.on('showAddressToggle', function(){
+            ractive.toggle('showAddress');
+        });
+
+
+ 
+    </script>
+
+
+
+</body>
+
+</html>
