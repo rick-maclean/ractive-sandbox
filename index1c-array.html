@@ -16,6 +16,34 @@
 
      <script id="template1" type="text/ractive" >
         <h1 style="color: {{color}}"> {{greeting}} my name is {{name}}</h1>
+
+        <p>3 options for accessing structure</p>
+        <ul>
+            <li>{{address.street}}</li>
+            <li>{{address.city}}</li>
+            <li>{{address.state}}</li>
+        </ul>
+        <ul>
+            {{#with address}}
+            <li>{{address.street}}</li>
+            <li>{{address.city}}</li>
+            <li>{{address.state}}</li>
+            {{/with}}
+        </ul>
+        <ul>
+            {{#address}}
+            <li>{{address.street}}</li>
+            <li>{{address.city}}</li>
+            <li>{{address.state}}</li>
+            {{/address}}
+        </ul>
+        <h3>Friends</h3>
+        <ul>
+        {{#friendsArray}}
+            <li>{{name}} - {{age}}</li>
+        {{/friendsArray}}
+        </ul>
+
      </script>
 
      <script src='http://cdn.ractivejs.org/latest/ractive.js'>
@@ -32,7 +60,17 @@
             data:{
                 greeting:'Hello greting',
                 name:'Baba',
-                color: "turquoise"
+                color: "turquoise",
+                address:{
+                    street: '7500 camp wisdom',
+                    city: 'dallas',
+                    state: 'TX'
+                },
+                friendsArray: [
+                    {  name: 'Tom', age: 45},
+                    {  name: 'Lori', age: 59},
+                    {  name: 'Mike', age: 48},  
+                ]
             }
         });
 

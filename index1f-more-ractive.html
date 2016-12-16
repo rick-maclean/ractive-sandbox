@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ractive Sandbox 1</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+</head>
+<body>
+        <!-- 3 areas needed
+        1) area to display  .... see div  id=app
+        2) template  type=text/ractive
+        3) instance    (var ractive = new Ractive.....
+        -->
+     <div class="container">
+        <div id="app1"></div>
+     </div>
+
+     <script id="template1" type="text/ractive" >
+        <h1 style="color: {{color}}"> {{greeting}} my name is {{name}}</h1>
+
+        <p>2 options for accessing structure</p>
+        <ul>
+            {{#with address}}
+            <li>{{street}}</li>
+            <li>{{city}}</li>
+            <li>{{state}}</li>
+            {{/with}}
+        </ul>
+        {{#if showAddress}}
+            <ul>
+                {{#address}}
+                <li>{{street}}</li>
+                <li>{{city}}</li>
+                <li>{{state}}</li>
+                {{/address}}
+            </ul>
+        {{else}}
+            <p> 3rd Address boolean set to false </p>
+        {{/if}}
+        <h3>Friends</h3>
+        <ul>
+        {{#friendsArray}}
+            <li>{{name}} - {{age}}</li>
+        {{/friendsArray}}
+        </ul>
+
+         <h3>Work History</h3>
+         <table class="table">
+             <tr>
+                 <th>ID</th>
+                 <th>Company</th>
+                 <th>Job TItle</th>
+                 <th>Years</th>
+             </tr>
+             {{#each jobs:i}}
+             <tr>
+                <td>{{i}}</td>                 
+                <td>{{company}}</td>                  
+                <td>{{title}}</td>
+                <td>{{years}}</td>
+             <tr>
+            {{/each}}
+         </table>
+
+     </script>
+
+     <script src='http://cdn.ractivejs.org/latest/ractive.js'>
+     </script>
+
+    <script>
+    //1st specify element to output  el
+    //2nd specify the template  template
+    //3rd specify any data
+        var ractive = new Ractive({
+            
+            el:'#app1',
+            template: '#template1',
+            data:{
+                greeting:'Hello greting',
+                name:'Baba',
+                color: "turquoise",
+                address:{
+                    street: '7500 camp wisdom',
+                    city: 'dallas',
+                    state: 'TX'
+                },
+                friendsArray: [
+                    {  name: 'Tom', age: 45},
+                    {  name: 'Lori', age: 59},
+                    {  name: 'Mike', age: 48},  
+                ],
+                showAddress : false,
+                jobs:[
+                    { company: 'xyzCompany', title: 'Boss', years: 5 },
+                    { company: 'abcCompany', title: 'Pinhead', years: 7 },
+                    { company: 'uvwCompany', title: 'Erl', years: 9 },
+                    { company: 'MacCompany', title: 'Duke', years: 55 }
+                ]
+            }
+        });
+
+        //ractive web site shows a lot of options 
+        // eg.  http://docs.ractivejs.org/latest/ractive-set
+        // ractive.set( keypath, value )
+        ractive.set('color', 'green');
+        console.log(ractive.get('name'));
+
+        ractive.push('jobs',{ company: 'pomegranat', title: 'startTrecPhone', years: 3 });
+        ractive.splice('jobs', 2, 2, { company: 'Duncan', title: 'Dark Warrior', years: 850 }); //start at 2 and remove 2 add one at 2
+    </script>
+
+
+
+</body>
+
+</html>
