@@ -11,6 +11,13 @@
         2) template  type=text/ractive
         3) instance    (var ractive = new Ractive.....
         4) this also has a component called Jobs
+
+
+        OVSERVERS
+        we can watch a keypath for changes
+        keypath means the location of some kind of data
+
+        eg in main instance we want to watch for 'name'
         -->
      <div class="container">
         <div id="app1"></div>
@@ -18,6 +25,13 @@
 
      <script id="template1" type="text/ractive" >
         <h1 style="color: {{color}}"> {{greeting}} my name is {{name}}</h1>
+
+        <h3>Friends</h3>
+        <ul>
+            {{#friendsArray}}
+                <li>{{name}} - {{age}}</li>
+            {{/friendsArray}}
+        </ul>
 
         <jobs />
 
@@ -62,20 +76,9 @@
      </script>
 
     <script>
-    //put things in a component here with ractive.extend
-    //will use a lifecycle method which is certains methods or events that get fired at certain times
-    //during the lifecycle of the rendering of a component/app
-    //need another template script wtih id of jobs to match #jobs
-    //need to specify this is a component with component: {} in the main ractive instance
-    // like this    components: {jobs:Jobs}
-    //to display it now we use the html tag  <jobs/>
+    
 
-    //move all the stuff into the Jobs component template
-    //isolated: true means only use its own data
-    //also need to move addJob function up here
-    //NOTE: had to change ractive.push to this.push
-
-    //Databinding see newJob below set to empty string
+    //
     
     var Jobs = Ractive.extend(
         {
@@ -125,13 +128,44 @@
                 greeting:'Hello greting',
                 name:'Baba',
                 color: "turquoise",
+                friendsArray: [
+                    {  name: 'Tom', age: 45},
+                    {  name: 'Lori', age: 59},
+                    {  name: 'Mike', age: 48},  
+                ],
             }
+        });
+
+        ractive.observe('name', function(newValue, oldValue, keypath){
+            console.log(keypath + 'changed to '+ newValue);
+        });
+
+        ractive.observe('friendsArray.1.name', function(newValue, oldValue, keypath){
+            console.log(keypath + 'changed to '+ newValue);
+        });
+
+        ractive.observe('friendsArray.*.name', function(newValue, oldValue, keypath){
+            console.log('wildcard observe ' + keypath + 'changed to '+ newValue);
+        });
+
+        ractive.set('friendsArray.1.isBest', true);
+
+        ractive.observe('friendsArray.*.isBest', function(newValue, oldValue, keypath){
+            console.log(keypath + ' is changed to  '+ newValue);
+        });
+
+        ractive.observe('friendsArray.*', function(newValue, oldValue, keypath){
+            if(newValue.isBest){
+                console.log(newValue.name + ' is my best friend' );
+            }
+            
         });
 
         //ractive web site shows a lot of options 
         // eg.  http://docs.ractivejs.org/latest/ractive-set
         // ractive.set( keypath, value )
         ractive.set('color', 'pink');
+        ractive.set('name', 'Rick');
         console.log(ractive.get('name'));
  
     </script>
